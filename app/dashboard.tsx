@@ -29,9 +29,11 @@ export default function HRDashboard() {
             <Link href="/Attendencepage" className="block outline-none">
                     <NavItem icon={<CalendarCheck size={20}/>}  label="Attendence"  />
            </Link>
-
+              <Link href="/Payrollpage" className="block outline-none">
+                    <NavItem icon={<CalendarCheck size={20}/>}  label="Payroll"  />
+           </Link>
           <NavItem icon={<FileText size={20}/>} label="Leave" />
-          <NavItem icon={<Wallet size={20}/>} label="Payroll" hasSubmenu />
+       
         </nav>
 
         <div className="mt-auto pt-10 border-t border-slate-100 space-y-2 text-slate-400">
