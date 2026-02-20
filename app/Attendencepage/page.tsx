@@ -2,7 +2,7 @@
 import React, { useState } from 'react';
 import { 
   Search, ChevronDown, Plus, MoreVertical, 
-  Calendar, Download, Check, X, Filter
+  Calendar, Download, Check, X, Filter, UserCheck, UserMinus, Activity
 } from 'lucide-react';
 
 export default function AttendanceSystem() {
@@ -23,40 +23,41 @@ export default function AttendanceSystem() {
   };
 
   return (
-    <div className="p-10 bg-white min-h-screen font-sans text-slate-900">
+    /* SaaS-Elite Neutral Background */
+    <div className="p-10 bg-[#F9FAFB] min-h-screen font-sans text-slate-900">
       
       {/* --- HEADER --- */}
-      <div className="flex justify-between items-end mb-10">
+      <div className="flex justify-between items-start mb-10">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Daily Attendance</h1>
-          <p className="text-slate-500 mt-1">Track and manage employee presence for {selectedDate}</p>
+          <h1 className="text-3xl font-bold tracking-tight text-slate-900">Daily Attendance</h1>
+          <p className="text-sm text-slate-500 mt-1 font-medium">Monitoring workforce presence for <span className="text-indigo-600 font-bold">{selectedDate}</span></p>
         </div>
         <div className="flex gap-3">
-          <button className="flex items-center gap-2 px-4 py-2.5 bg-slate-100 rounded-xl font-medium text-sm hover:bg-slate-200 transition">
-            <Download size={18} /> Export CSV
+          <button className="flex items-center gap-2 px-5 py-2.5 bg-white border border-gray-200 rounded-xl font-semibold text-xs text-gray-600 hover:bg-gray-50 transition shadow-sm">
+            <Download size={16} /> Export CSV
           </button>
-          <button className="flex items-center gap-2 px-6 py-2.5 bg-[#1a1a1a] text-white rounded-xl font-medium hover:opacity-90 transition shadow-lg shadow-black/10">
-            Save Records
+          <button className="flex items-center gap-2 px-6 py-2.5 bg-indigo-600 text-white rounded-xl font-semibold text-sm hover:bg-indigo-700 transition shadow-lg shadow-indigo-100">
+            <Check size={18} /> Save Records
           </button>
         </div>
       </div>
 
-      {/* --- STATS SUMMARY (Minimalist Style) --- */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-        <SummaryCard title="Total Present" value="24" detail="of 26 total" icon={<Check size={20} className="text-green-600"/>} />
-        <SummaryCard title="Total Absent" value="02" detail="4% of workforce" icon={<X size={20} className="text-red-500"/>} />
-        <SummaryCard title="Avg. Presence" value="94%" detail="Last 30 days" icon={<Calendar size={20} className="text-slate-600"/>} />
+      {/* --- STATS SUMMARY --- */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-10">
+        <SummaryCard title="Total Present" value="24" detail="of 26 total" icon={<UserCheck size={22} />} type="success" />
+        <SummaryCard title="Total Absent" value="02" detail="4% of workforce" icon={<UserMinus size={22} />} type="danger" />
+        <SummaryCard title="Avg. Presence" value="94%" detail="Last 30 days" icon={<Activity size={22} />} type="primary" />
       </div>
 
       {/* --- FILTERS & SEARCH --- */}
       <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-4">
             <div className="relative w-80">
-                <input type="text" placeholder="Search for specific employee...." className="w-full pl-4 pr-10 py-2.5 border border-slate-200 rounded-xl bg-slate-50 focus:outline-none focus:bg-white focus:ring-1 focus:ring-slate-300 transition-all" />
-                <Search className="absolute right-3 top-3 text-slate-400" size={18} />
+                <input type="text" placeholder="Search for specific employee...." className="w-full pl-11 pr-4 py-3 border border-gray-200 rounded-2xl bg-white focus:outline-none focus:ring-2 focus:ring-indigo-500/10 transition-all text-sm font-medium" />
+                <Search className="absolute left-4 top-3.5 text-gray-400" size={18} />
             </div>
-            <div className="flex items-center gap-2 px-4 py-2 bg-white border border-slate-200 rounded-xl shadow-sm">
-                <Calendar size={16} className="text-slate-500" />
+            <div className="flex items-center gap-3 px-4 py-2.5 bg-white border border-gray-200 rounded-2xl shadow-sm">
+                <Calendar size={16} className="text-indigo-600" />
                 <input 
                   type="date" 
                   value={selectedDate} 
@@ -67,48 +68,47 @@ export default function AttendanceSystem() {
         </div>
 
         <div className="flex items-center gap-3">
-          <button className="flex items-center gap-2 px-4 py-2.5 bg-slate-100 rounded-xl font-medium text-sm">Columns <ChevronDown size={16} /></button>
-          <button className="flex items-center gap-2 px-4 py-2.5 bg-slate-100 rounded-xl font-medium text-sm">Filter <Filter size={16} /></button>
+          <button className="flex items-center gap-2 px-4 py-2.5 bg-white border border-gray-200 rounded-xl font-bold text-[11px] uppercase tracking-widest text-gray-500 hover:border-indigo-300 transition-all">Filter <Filter size={14} /></button>
         </div>
       </div>
 
       {/* --- ATTENDANCE TABLE --- */}
-      <div className="border border-slate-100 rounded-2xl overflow-hidden shadow-sm">
+      <div className="bg-white border border-gray-200/60 rounded-[2rem] overflow-hidden shadow-sm">
         <table className="w-full border-collapse">
           <thead>
-            <tr className="text-slate-400 text-[11px] uppercase tracking-widest border-b border-slate-100 text-left bg-slate-50/50">
-              <th className="px-6 py-4 font-bold">username</th>
-              <th className="px-6 py-4 font-bold">employee id</th>
-              <th className="px-6 py-4 font-bold text-center">status</th>
-              <th className="px-6 py-4 font-bold text-right">toggle attendance</th>
+            <tr className="text-gray-400 text-[10px] uppercase tracking-[0.2em] border-b border-gray-50 text-left bg-gray-50/50">
+              <th className="px-8 py-5 font-bold">Employee</th>
+              <th className="px-8 py-5 font-bold">ID Number</th>
+              <th className="px-8 py-5 font-bold text-center">Current Status</th>
+              <th className="px-8 py-5 font-bold text-right">Quick Action</th>
             </tr>
           </thead>
-          <tbody>
+          <tbody className="divide-y divide-gray-50">
             {employees.map((emp, i) => (
-              <tr key={i} className="border-b border-slate-50 hover:bg-slate-50/50 transition-colors group">
-                <td className="px-6 py-4 flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full bg-black flex items-center justify-center text-white text-[10px] font-bold">
+              <tr key={i} className="hover:bg-indigo-50/30 transition-colors group">
+                <td className="px-8 py-5 flex items-center gap-4">
+                  <div className="w-12 h-12 rounded-2xl bg-indigo-50 flex items-center justify-center text-indigo-600 text-xs font-black border border-indigo-100 group-hover:bg-indigo-600 group-hover:text-white transition-all duration-300">
                     {emp.name.split(' ').map(n => n[0]).join('').toUpperCase()}
                   </div>
                   <div>
-                    <div className="font-bold text-sm">{emp.name}</div>
-                    <div className="text-xs text-slate-400 font-medium">{emp.email}</div>
+                    <div className="font-bold text-[15px] text-slate-900">{emp.name}</div>
+                    <div className="text-xs text-gray-400 font-medium">{emp.email}</div>
                   </div>
                 </td>
-                <td className="px-6 py-4 text-sm font-medium text-slate-600">#{emp.id}</td>
-                <td className="px-6 py-4 text-center">
-                  <span className={`px-4 py-1 rounded-full text-[10px] font-black uppercase tracking-tighter border transition-all ${
+                <td className="px-8 py-5 text-sm font-bold text-gray-400">#{emp.id}</td>
+                <td className="px-8 py-5 text-center">
+                  <span className={`px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest border transition-all ${
                     emp.status === 'Present' 
-                    ? 'text-green-600 border-green-200 bg-green-50' 
-                    : 'text-red-500 border-red-200 bg-red-50'
+                    ? 'text-emerald-600 border-emerald-100 bg-emerald-50' 
+                    : 'text-rose-500 border-rose-100 bg-rose-50'
                   }`}>
                     {emp.status}
                   </span>
                 </td>
-                <td className="px-6 py-4 text-right">
+                <td className="px-8 py-5 text-right">
                   <button 
                     onClick={() => toggleStatus(emp.id)}
-                    className="px-4 py-2 text-xs font-bold bg-white border border-slate-200 rounded-lg hover:border-black transition-all hover:bg-black hover:text-white"
+                    className="px-5 py-2 text-[10px] font-bold uppercase tracking-widest bg-white border border-gray-200 rounded-xl hover:border-indigo-600 hover:text-indigo-600 transition-all shadow-sm active:scale-95"
                   >
                     Mark {emp.status === 'Present' ? 'Absent' : 'Present'}
                   </button>
@@ -122,16 +122,22 @@ export default function AttendanceSystem() {
   );
 }
 
-// --- MINIMALIST SUMMARY CARD ---
-function SummaryCard({ title, value, detail, icon }: any) {
+// --- PREMIUM SUMMARY CARD ---
+function SummaryCard({ title, value, detail, icon, type }: any) {
+  const themes: any = {
+    success: "text-emerald-600 bg-emerald-50 border-emerald-100 shadow-emerald-100/20",
+    danger: "text-rose-600 bg-rose-50 border-rose-100 shadow-rose-100/20",
+    primary: "text-indigo-600 bg-indigo-50 border-indigo-100 shadow-indigo-100/20",
+  };
+
   return (
-    <div className="bg-white p-6 rounded-2xl border border-slate-100 shadow-sm flex items-center justify-between hover:border-slate-300 transition-all">
+    <div className="bg-white p-8 rounded-[2.5rem] border border-gray-100 shadow-[0_10px_30px_rgba(0,0,0,0.02)] flex items-center justify-between hover:translate-y-[-4px] transition-all duration-300 group">
       <div>
-        <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest mb-1">{title}</p>
-        <h2 className="text-2xl font-black text-slate-900">{value}</h2>
-        <p className="text-[10px] text-slate-400 font-bold mt-1 uppercase tracking-tighter">{detail}</p>
+        <p className="text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] mb-2">{title}</p>
+        <h2 className="text-4xl font-black text-slate-900 tracking-tighter">{value}</h2>
+        <p className={`text-[10px] font-bold mt-2 uppercase tracking-tight ${type === 'danger' ? 'text-rose-400' : 'text-indigo-400'}`}>{detail}</p>
       </div>
-      <div className="w-12 h-12 bg-slate-50 rounded-xl flex items-center justify-center border border-slate-100">
+      <div className={`w-14 h-14 rounded-2xl flex items-center justify-center border transition-all duration-300 ${themes[type]} group-hover:scale-110`}>
         {icon}
       </div>
     </div>
