@@ -2,20 +2,34 @@
 import React, { useState } from 'react';
 import { 
   Search, Edit3, MoreVertical, CheckCircle, 
-  Trash2, Paperclip, Send, ChevronDown, 
-  Filter, Inbox as InboxIcon, Star, Archive, Clock
+  Trash2, Paperclip, Send, XCircle, 
+  Calendar, Clock, AlertCircle, Star, Archive
 } from 'lucide-react';
 
 export default function InboxPage() {
   const [activeMail, setActiveMail] = useState(0);
-  const [messages] = useState([
-    { id: 0, sender: "Xyvie Lyons", subject: "Leave Request - Medical", preview: "I am writing to formally request a medical leave for a scheduled procedure...", time: "09:40 AM", read: false, label: "HR" },
-    { id: 1, sender: "Abra Barron", subject: "Payroll Query", preview: "I noticed a discrepancy in my bonus calculation for the Q1 performance...", time: "Yesterday", read: true, label: "Finance" },
-    { id: 2, sender: "Thomas Goodman", subject: "Onboarding Documents", preview: "Please find attached the signed contract and ID verification files...", time: "Feb 18", read: true, label: "General" },
+  const [messages, setMessages] = useState([
+    { 
+        id: 0, 
+        sender: "Xyvie Lyons", 
+        subject: "Leave Request", 
+        type: "LEAVE_REQUEST",
+        leaveType: "Emergency", // Keywords: Emergency, Planned, Medical
+        startDate: "Oct 12, 2024",
+        endDate: "Oct 15, 2024",
+        preview: "I have a family medical emergency and need to take immediate leave. My tasks are handed over to the team.", 
+        time: "09:40 AM", 
+        read: false, 
+        label: "HR",
+        status: "pending" 
+    },
+    { id: 1, sender: "Abra Barron", subject: "Payroll Query", type: "GENERAL", preview: "I noticed a discrepancy in my bonus calculation for the Q1 performance...", time: "Yesterday", read: true, label: "Finance" },
+    { id: 2, sender: "Thomas Goodman", subject: "Onboarding Documents", type: "GENERAL", preview: "Please find attached the signed contract and ID verification files...", time: "Feb 18", read: true, label: "General" },
   ]);
 
+  const currentMsg = messages.find(m => m.id === activeMail);
+
   return (
-    /* SaaS-Elite Neutral Background */
     <div className="p-10 bg-[#F9FAFB] min-h-screen font-sans text-slate-900">
       
       {/* --- HEADER --- */}
@@ -24,22 +38,20 @@ export default function InboxPage() {
           <h1 className="text-3xl font-bold tracking-tight text-slate-900">Inbox</h1>
           <p className="text-sm text-slate-500 mt-1 font-medium">Manage employee communications and requests</p>
         </div>
-        <div className="flex gap-3">
-          <button className="flex items-center gap-2 px-6 py-3 bg-indigo-600 text-white rounded-xl font-semibold text-sm hover:bg-indigo-700 transition shadow-lg shadow-indigo-100 active:scale-95">
-            <Edit3 size={18} /> Compose Message
-          </button>
-        </div>
+        <button className="flex items-center gap-2 px-6 py-3 bg-indigo-600 text-white rounded-xl font-semibold text-sm hover:bg-indigo-700 transition shadow-lg shadow-indigo-100">
+          <Edit3 size={18} /> Compose Message
+        </button>
       </div>
 
       <div className="flex border border-gray-200/60 rounded-[2.5rem] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.04)] bg-white min-h-[750px]">
         
-        {/* --- LEFT SIDEBAR: MESSAGE LIST --- */}
+        {/* --- LEFT SIDEBAR --- */}
         <div className="w-[380px] border-r border-gray-100 flex flex-col bg-gray-50/30">
-          <div className="p-6 border-b border-gray-100 bg-white/50 backdrop-blur-md">
-            <div className="relative">
-              <input type="text" placeholder="Search conversations..." className="w-full pl-11 pr-4 py-3 border border-gray-200 rounded-2xl bg-white text-sm font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500/10 transition-all shadow-sm" />
-              <Search className="absolute left-4 top-3.5 text-gray-400" size={18} />
-            </div>
+          <div className="p-6 border-b border-gray-100 bg-white/50 backdrop-blur-md text-sm font-medium">
+             <div className="relative">
+               <input type="text" placeholder="Search conversations..." className="w-full pl-11 pr-4 py-3 border border-gray-200 rounded-2xl bg-white text-sm" />
+               <Search className="absolute left-4 top-3.5 text-gray-400" size={18} />
+             </div>
           </div>
           
           <div className="overflow-y-auto flex-1">
@@ -52,10 +64,10 @@ export default function InboxPage() {
                 {activeMail === msg.id && <div className="absolute left-0 top-0 bottom-0 w-1 bg-indigo-600" />}
                 <div className="flex justify-between items-start mb-1.5">
                   <span className={`text-[13px] font-bold ${activeMail === msg.id ? 'text-indigo-600' : 'text-slate-900'}`}>{msg.sender}</span>
-                  <span className="text-[10px] text-gray-400 font-bold uppercase tracking-tight">{msg.time}</span>
+                  <span className="text-[10px] text-gray-400 font-bold uppercase">{msg.time}</span>
                 </div>
-                <h4 className={`text-[13px] mb-1.5 tracking-tight line-clamp-1 ${!msg.read ? 'font-black text-slate-900' : 'text-slate-500 font-medium'}`}>{msg.subject}</h4>
-                <p className="text-[12px] text-gray-400 font-medium line-clamp-2 leading-relaxed">{msg.preview}</p>
+                <h4 className="text-[13px] mb-1.5 font-black text-slate-900">{msg.subject}</h4>
+                <p className="text-[12px] text-gray-400 line-clamp-2">{msg.preview}</p>
               </div>
             ))}
           </div>
@@ -63,66 +75,85 @@ export default function InboxPage() {
 
         {/* --- RIGHT SIDE: MESSAGE VIEW --- */}
         <div className="flex-1 flex flex-col bg-white">
-          {/* Toolbar */}
-          <div className="px-8 py-5 border-b border-gray-100 flex justify-between items-center bg-white/80 backdrop-blur-md sticky top-0 z-10">
-            <div className="flex items-center gap-1.5">
-                <ToolbarButton icon={<CheckCircle size={18}/>} label="Resolve" color="hover:text-emerald-600 hover:bg-emerald-50" />
-                <ToolbarButton icon={<Archive size={18}/>} label="Archive" />
-                <ToolbarButton icon={<Clock size={18}/>} label="Snooze" />
-                <div className="h-6 w-px bg-gray-100 mx-2" />
-                <ToolbarButton icon={<Trash2 size={18}/>} label="Delete" color="hover:text-rose-500 hover:bg-rose-50" />
-            </div>
-            <div className="flex items-center gap-3">
-              <span className="px-4 py-1.5 bg-indigo-50 rounded-full text-[10px] font-bold uppercase tracking-widest text-indigo-600 border border-indigo-100">{messages[activeMail].label}</span>
-              <button className="p-2.5 text-gray-300 hover:text-indigo-600 transition hover:bg-indigo-50 rounded-xl"><MoreVertical size={20}/></button>
-            </div>
-          </div>
-
+          
           {/* Content Area */}
           <div className="p-12 flex-1 overflow-y-auto">
-            <div className="flex items-center gap-5 mb-12">
-              <div className="w-14 h-14 rounded-[1.25rem] bg-indigo-600 flex items-center justify-center text-white text-sm font-black shadow-xl shadow-indigo-100 uppercase tracking-tighter">
-                {messages[activeMail].sender.split(' ').map(n => n[0]).join('')}
-              </div>
-              <div>
-                <h2 className="font-bold text-2xl text-slate-900 tracking-tight">{messages[activeMail].sender}</h2>
-                <div className="flex items-center gap-2 mt-0.5">
-                   <p className="text-[11px] font-bold text-gray-400 uppercase tracking-widest">From: {messages[activeMail].sender.toLowerCase().replace(' ', '.')}@company.com</p>
-                   <div className="w-1 h-1 rounded-full bg-gray-300" />
-                   <p className="text-[11px] font-bold text-gray-400 uppercase tracking-widest">{messages[activeMail].time}</p>
-                </div>
-              </div>
-            </div>
-
-            <h1 className="text-3xl font-black text-slate-900 mb-8 tracking-tighter leading-tight">{messages[activeMail].subject}</h1>
             
-            <div className="text-[15px] text-slate-600 leading-loose space-y-6 font-medium max-w-3xl">
-              <p>Hello Team,</p>
-              <p>{messages[activeMail].preview} This request is essential for maintaining workflow continuity. I have prepared all necessary documentation to ensure a smooth transition during my absence.</p>
-              <p>Please let me know if there are any additional forms I need to sign or if we need to schedule a brief meeting to discuss the handover process before the end of the week.</p>
-              <div className="pt-8 mt-12 border-t border-gray-50 flex items-center justify-between">
-                <div>
-                  <p className="text-gray-400 text-xs mb-1">Kind regards,</p>
-                  <strong className="text-slate-900 font-bold text-lg">{messages[activeMail].sender}</strong>
+            {/* Conditional Rendering: Leave Request vs General Mail */}
+            {currentMsg.type === "LEAVE_REQUEST" ? (
+              <div className="max-w-3xl">
+                {/* Profile Header */}
+                <div className="flex items-center gap-4 mb-10">
+                    <div className="w-12 h-12 rounded-full bg-orange-100 text-orange-600 flex items-center justify-center font-bold">
+                        {currentMsg.sender.charAt(0)}
+                    </div>
+                    <div>
+                        <h2 className="font-bold text-xl">{currentMsg.sender}</h2>
+                        <span className="text-xs text-gray-400 font-bold uppercase tracking-wider">Requesting Absence</span>
+                    </div>
                 </div>
-                <button className="flex items-center gap-2 text-xs font-bold text-indigo-600 uppercase tracking-widest hover:bg-indigo-50 px-4 py-2 rounded-lg transition-all">
-                  <Star size={14} /> Star Conversation
-                </button>
+
+                {/* The Leave Request "Card" */}
+                <div className="bg-slate-50 border border-slate-200 rounded-[2rem] p-8 mb-8">
+                    <div className="flex justify-between items-start mb-6">
+                        <div>
+                            <span className={`px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-widest border ${
+                                currentMsg.leaveType === 'Emergency' ? 'bg-red-50 text-red-600 border-red-100' : 'bg-blue-50 text-blue-600 border-blue-100'
+                            }`}>
+                                {currentMsg.leaveType} Leave
+                            </span>
+                            <h1 className="text-3xl font-black mt-3 tracking-tighter">Leave Request</h1>
+                        </div>
+                        <div className="text-right">
+                            <p className="text-[10px] font-bold text-slate-400 uppercase">Duration</p>
+                            <p className="text-sm font-bold text-slate-900">{currentMsg.startDate} — {currentMsg.endDate}</p>
+                        </div>
+                    </div>
+
+                    <p className="text-slate-600 leading-relaxed font-medium mb-8">
+                        "{currentMsg.preview}"
+                    </p>
+
+                    {/* Quick Stats/Metadata */}
+                    <div className="flex gap-6 border-t border-slate-200 pt-6">
+                        <div className="flex items-center gap-2 text-slate-500">
+                            <Clock size={16} /> <span className="text-xs font-bold uppercase">4 Days Requested</span>
+                        </div>
+                        <div className="flex items-center gap-2 text-slate-500">
+                            <AlertCircle size={16} /> <span className="text-xs font-bold uppercase">Emergency Priority</span>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Admin Action Buttons */}
+                <div className="flex gap-4">
+                    <button className="flex-1 flex items-center justify-center gap-3 bg-emerald-600 text-white py-4 rounded-2xl font-bold text-sm hover:bg-emerald-700 transition shadow-lg shadow-emerald-100">
+                        <CheckCircle size={18} /> Approve Request
+                    </button>
+                    <button className="flex-1 flex items-center justify-center gap-3 border-2 border-rose-100 text-rose-600 py-4 rounded-2xl font-bold text-sm hover:bg-rose-50 transition">
+                        <XCircle size={18} /> Decline Request
+                    </button>
+                </div>
               </div>
-            </div>
+            ) : (
+              // Standard Mail View
+              <div>
+                <h1 className="text-3xl font-black text-slate-900 mb-8 tracking-tighter">{currentMsg.subject}</h1>
+                <p className="text-[15px] text-slate-600 leading-loose">{currentMsg.preview}</p>
+              </div>
+            )}
           </div>
 
-          {/* Modern Action-Oriented Reply Box */}
+          {/* Reply Box (Always visible at bottom for conversation) */}
           <div className="p-8 border-t border-gray-100 bg-gray-50/30">
-            <div className="bg-white rounded-[2rem] p-6 border border-gray-200 shadow-sm focus-within:ring-4 focus-within:ring-indigo-500/5 focus-within:border-indigo-200 transition-all">
-              <textarea placeholder="Type your response here..." className="w-full bg-transparent outline-none text-[15px] min-h-[140px] resize-none font-medium text-slate-700 placeholder:text-gray-300" />
-              <div className="flex justify-between items-center mt-6 pt-6 border-t border-gray-50">
-                <div className="flex items-center gap-2">
-                  <button className="p-3 text-gray-400 hover:text-indigo-600 transition hover:bg-indigo-50 rounded-2xl"><Paperclip size={20}/></button>
-                  <button className="p-3 text-gray-400 hover:text-indigo-600 transition hover:bg-indigo-50 rounded-2xl"><Star size={20}/></button>
+            <div className="bg-white rounded-[2rem] p-6 border border-gray-200 shadow-sm">
+              <textarea placeholder="Write a reply or explain your decision..." className="w-full bg-transparent outline-none text-[15px] min-h-[100px] resize-none font-medium" />
+              <div className="flex justify-between items-center mt-4">
+                <div className="flex gap-2">
+                  <button className="p-3 text-gray-400 hover:bg-gray-100 rounded-xl"><Paperclip size={20}/></button>
                 </div>
-                <button className="bg-indigo-600 text-white px-10 py-4 rounded-2xl text-xs font-bold uppercase tracking-widest flex items-center gap-3 hover:bg-indigo-700 transition shadow-xl shadow-indigo-100 active:scale-95">
-                  Send Message <Send size={16}/>
+                <button className="bg-indigo-600 text-white px-8 py-3 rounded-xl text-xs font-bold uppercase tracking-widest flex items-center gap-2 hover:bg-indigo-700 transition">
+                  Send Reply <Send size={16}/>
                 </button>
               </div>
             </div>
@@ -131,17 +162,5 @@ export default function InboxPage() {
         </div>
       </div>
     </div>
-  );
-}
-
-// --- HELPER COMPONENT: TOOLBAR BUTTON ---
-function ToolbarButton({ icon, label, color = "hover:text-indigo-600 hover:bg-indigo-50" }: any) {
-  return (
-    <button className={`flex items-center gap-2 px-3 py-2.5 rounded-xl text-gray-400 transition-all group ${color}`}>
-      {icon}
-      <span className="text-[11px] font-bold uppercase tracking-widest opacity-0 group-hover:opacity-100 transition-opacity hidden md:block">
-        {label}
-      </span>
-    </button>
   );
 }

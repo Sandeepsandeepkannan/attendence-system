@@ -38,8 +38,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <SidebarLink href="/" icon={<LayoutDashboard size={20}/>} label="Dashboard" active={pathname === '/'} />
               <SidebarLink href="/Employeedashboard" icon={<Users size={20}/>} label="Employees" active={pathname === '/Employeedashboard'} />
               <SidebarLink href="/Attendencepage" icon={<CalendarCheck size={20}/>} label="Attendance" active={pathname === '/Attendencepage'} />
-              <SidebarLink href="/Payrollpage" icon={<Wallet size={20}/>} label="Payroll" active={pathname === '/Payrollpage'} />
+              <SidebarLink href="/announcementpage" icon={<Wallet size={20}/>} label="Announcement" active={pathname === '/Announcement'} />
               <SidebarLink href="/Inboxpage" icon={<Inbox size={20}/>} label="Inbox" active={pathname === '/Inboxpage'} />
+              <SidebarLink href="/calendar" icon={<Inbox size={20}/>} label="calendar" active={pathname === '/calendar'} />
             </nav>
 
             {/* User / Support Section */}
